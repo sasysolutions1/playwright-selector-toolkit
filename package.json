@@ -1,0 +1,35 @@
+{
+  "name": "@sasysolutions1/playwright-selector-toolkit",
+  "version": "0.1.0",
+  "description": "Rank and validate maintainable Playwright locators for authorized browser automation.",
+  "type": "module",
+  "exports": "./src/index.js",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "node --check src/index.js && node --check examples/discover-and-validate.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.50.0"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "playwright",
+    "selectors",
+    "locators",
+    "browser-automation",
+    "testing"
+  ],
+  "license": "MIT"
+}
