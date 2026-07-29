@@ -153,3 +153,16 @@ reviewable release path instead of an unsupported one-line description.
 
 Review/merge, the `v0.1.0` tag, and GitHub Release publication remain required.
 Real-project acceptance should use only an explicitly authorized test target.
+
+## 2026-07-29 00:04 MDT / 2026-07-29 06:04 UTC - verified source archive
+
+The exact tested candidate commit `aef65eacf885` was exported as a sanitized
+ZIP archive. Local ZIP integrity and SHA-256 verification passed, and Google
+Drive readback confirmed the 11,270-byte file in the existing unshared ASL
+Site Backups folder.
+
+The archive contains tracked source and documentation only. It excludes
+credentials, browser profiles, session state, recorded traffic and target-site
+data. GitHub remains the reviewed source of truth and Drive is the additional
+source-archive backup. Review, merge, the `v0.1.0` tag, GitHub Release and
+authorized-project acceptance remain open.
