@@ -116,72 +116,55 @@ const candidates = discoverSelectorCandidates(snapshot, {
 });
 ```
 
+## Targets inside an iframe
+
+Payment fields, embedded editors, and third-party widgets usually live in an
+iframe, where a plain page-level locator cannot reach them. Pass `frame` with
+the iframe selector, or an array of selectors to traverse nested frames. The
+same root is used for both snapshot capture and validation:
+
+```js
+const report = await discoverAndValidate(page, "input[name=cardnumber]", {
+  frame: 'iframe[title="Secure card input"]',
+});
+
+const nested = await discoverAndValidate(page, "button[type=submit]", {
+  frame: ["#outer-frame", "#inner-frame"],
+});
+```
+
+## Accessible name and role resolution
+
+Implicit ARIA roles are resolved for common elements rather than assumed, so
+the strongest role-based candidate is still produced for a `select`
+(`combobox`, or `listbox` when multiple or sized), a table, a heading, a list,
+a landmark, and typed inputs such as `number` (`spinbutton`) or `search`
+(`searchbox`). An explicit `role` attribute always wins.
+
+The accessible name follows `aria-labelledby`, then `aria-label`, then an
+associated label, then `alt`, then `title`, then the element's text.
+
 ## API
 
-- `captureTargetSnapshot(page, selector)`
+- `captureTargetSnapshot(page, selector, options)`
 - `discoverSelectorCandidates(snapshot, options)`
 - `validateSelectorCandidates(page, candidates, options)`
 - `chooseBestCandidate(results)`
 - `discoverAndValidate(page, selector, options)`
-- `locatorFromCandidate(page, candidate)`
+- `locatorFromCandidate(root, candidate)`
 - `formatPlaywrightLocator(candidate)`
 - `isLikelyGeneratedIdentifier(value)`
+- `resolveSearchRoot(page, options)`
+
+`options.timeout` defaults to 5000ms for the visibility check.
 
 See [docs/safety.md](docs/safety.md) for the authorized-use and fail-closed
 boundary.
 
 ## Release status
 
-Version `0.1.0` is the first tested release candidate. The source contains no
-credentials, target-site data, browser profiles, or recorded sessions. A
-reviewed merge and `v0.1.0` tag are required before publishing the GitHub
-release.
+Version `0.1.0` is the first tested release. The source contains no
+credentials, target-site data, browser profiles, or recorded sessions. The
+`v0.1.0` tag and GitHub Release publication remain open.
 
-## 2026-07-28 23:39 MDT / 2026-07-29 05:39 UTC - Initial tested toolkit release candidate
-
-### Outcome and reason
-
-The previously documentation-only repository now contains a working,
-dependency-light selector discovery and validation library. The update was
-made so the public project has current examples, repeatable tests, and a
-reviewable release path instead of an unsupported one-line description.
-
-### Scope and user-visible impact
-
-- Added the `0.1.0` public API, usage example, safety boundary, changelog,
-  release checklist, and multi-version CI.
-- Locator ranking favors accessible and explicit automation contracts and
-  never silently chooses positional or long DOM-path selectors.
-- Candidate validation reports uniqueness and visibility and returns `null`
-  when no candidate is safe to use.
-
-### Validation, source, backup, and remaining work
-
-- Syntax checks and all unit tests passed locally without browser credentials
-  or target-site data.
-- The repository is the source of truth; there is no live service, production
-  database, environment file, or Droplet deployment to back up.
-- The GitHub review branch contains no credentials, personal data, session
-  state, target-site content, or trade-secret implementation detail.
-
-Review/merge, the `v0.1.0` tag, and GitHub Release publication remain required.
-Real-project acceptance should use only an explicitly authorized test target.
-
-## 2026-07-29 00:04 MDT / 2026-07-29 06:04 UTC - verified source archive
-
-The exact tested candidate commit `aef65eacf885` was exported as a sanitized
-ZIP archive. Local ZIP integrity and SHA-256 verification passed, and Google
-Drive readback confirmed the 11,270-byte file in the existing unshared ASL
-Site Backups folder.
-
-The archive contains tracked source and documentation only. It excludes
-credentials, browser profiles, session state, recorded traffic and target-site
-data. GitHub remains the reviewed source of truth and Drive is the additional
-source-archive backup. Review, merge, the `v0.1.0` tag, GitHub Release and
-authorized-project acceptance remain open.
-
-## 2026-08-01 — source-location clarification
-
-- Clarified that the complete toolkit is held in pull request #1 on branch `agent/initial-tested-toolkit-20260729`, while `main` remains a placeholder.
-- Documented the included implementation, tests, example, safety guidance, CI, changelog, and release checklist so the source cannot be mistaken for lost work.
-- No runtime behavior changed. Review, merge, the `v0.1.0` tag, GitHub Release publication, and acceptance testing against an explicitly authorized target remain outstanding.
+See [CHANGELOG.md](CHANGELOG.md) for the release history.
