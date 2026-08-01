@@ -7,6 +7,19 @@ uniqueness and visibility, and returns the strongest locator that actually
 works. It prefers user-facing accessibility contracts over generated CSS paths
 and refuses to hide ambiguity behind `nth()` fallbacks.
 
+## Where the complete toolkit lives
+
+The complete engineered toolkit is maintained on the GitHub branch
+`agent/initial-tested-toolkit-20260729` and reviewed in
+[pull request #1](https://github.com/sasysolutions1/playwright-selector-toolkit/pull/1).
+The default `main` branch still contains only the original project placeholder
+until that pull request is reviewed and merged.
+
+The implementation branch contains the selector engine, automated tests, usage
+example, safety documentation, CI workflow, changelog, and release checklist.
+Do not reconstruct the toolkit from the placeholder branch or deploy the
+placeholder over this reviewed source.
+
 ## What it does
 
 - Captures a compact DOM snapshot from a known seed selector.
@@ -166,3 +179,9 @@ credentials, browser profiles, session state, recorded traffic and target-site
 data. GitHub remains the reviewed source of truth and Drive is the additional
 source-archive backup. Review, merge, the `v0.1.0` tag, GitHub Release and
 authorized-project acceptance remain open.
+
+## 2026-08-01 — source-location clarification
+
+- Clarified that the complete toolkit is held in pull request #1 on branch `agent/initial-tested-toolkit-20260729`, while `main` remains a placeholder.
+- Documented the included implementation, tests, example, safety guidance, CI, changelog, and release checklist so the source cannot be mistaken for lost work.
+- No runtime behavior changed. Review, merge, the `v0.1.0` tag, GitHub Release publication, and acceptance testing against an explicitly authorized target remain outstanding.
