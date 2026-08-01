@@ -179,41 +179,150 @@ export function formatPlaywrightLocator(candidate) {
   }
 }
 
-export async function captureTargetSnapshot(page, selector) {
+export function resolveSearchRoot(page, options = {}) {
+  const frame = options.frame;
+  if (!frame) return page;
+  if (typeof frame === "string") {
+    if (typeof page.frameLocator !== "function") {
+      throw new TypeError("page does not support frameLocator");
+    }
+    return page.frameLocator(frame);
+  }
+  if (Array.isArray(frame)) {
+    return frame.reduce((root, step) => {
+      if (typeof root.frameLocator !== "function") {
+        throw new TypeError("nested frame traversal requires frameLocator");
+      }
+      return root.frameLocator(step);
+    }, page);
+  }
+  throw new TypeError("options.frame must be a selector string or an array");
+}
+
+export async function captureTargetSnapshot(page, selector, options = {}) {
   if (!page || typeof selector !== "string" || !selector.trim()) {
     throw new TypeError("page and a non-empty selector are required");
   }
 
-  return page.locator(selector).first().evaluate(
+  const root = resolveSearchRoot(page, options);
+
+  return root.locator(selector).first().evaluate(
     (element, testIdAttributes) => {
       const normalized = (value) =>
         String(value ?? "").replace(/\s+/g, " ").trim();
+
+      const staticRoles = {
+        article: "article",
+        aside: "complementary",
+        button: "button",
+        dialog: "dialog",
+        fieldset: "group",
+        figure: "figure",
+        form: "form",
+        h1: "heading",
+        h2: "heading",
+        h3: "heading",
+        h4: "heading",
+        h5: "heading",
+        h6: "heading",
+        hr: "separator",
+        img: "img",
+        main: "main",
+        meter: "meter",
+        nav: "navigation",
+        ol: "list",
+        optgroup: "group",
+        option: "option",
+        output: "status",
+        progress: "progressbar",
+        search: "search",
+        summary: "button",
+        table: "table",
+        tbody: "rowgroup",
+        td: "cell",
+        textarea: "textbox",
+        tfoot: "rowgroup",
+        th: "columnheader",
+        thead: "rowgroup",
+        tr: "row",
+        ul: "list",
+      };
+      const inputTypeRoles = {
+        button: "button",
+        checkbox: "checkbox",
+        email: "textbox",
+        image: "button",
+        number: "spinbutton",
+        radio: "radio",
+        range: "slider",
+        reset: "button",
+        search: "searchbox",
+        submit: "button",
+        tel: "textbox",
+        text: "textbox",
+        url: "textbox",
+      };
+
       const tagName = element.tagName.toLowerCase();
       const inputType = normalized(element.getAttribute("type")).toLowerCase();
-      const implicitRole =
-        element.getAttribute("role") ||
-        (tagName === "button"
-          ? "button"
-          : tagName === "a" && element.hasAttribute("href")
-            ? "link"
-            : tagName === "textarea"
-              ? "textbox"
-              : tagName === "input" &&
-                  ["button", "submit", "reset"].includes(inputType)
-                ? "button"
-                : tagName === "input" &&
-                    ["checkbox", "radio"].includes(inputType)
-                  ? inputType
-                  : tagName === "input"
-                    ? "textbox"
-                    : "");
+
+      let implicitRole = normalized(element.getAttribute("role"));
+      if (!implicitRole) {
+        if (tagName === "a" || tagName === "area") {
+          implicitRole = element.hasAttribute("href") ? "link" : "";
+        } else if (tagName === "input") {
+          // A list-backed text input exposes the combobox role.
+          implicitRole =
+            inputType === "text" && element.hasAttribute("list")
+              ? "combobox"
+              : (inputTypeRoles[inputType] ?? "textbox");
+        } else if (tagName === "select") {
+          // Multi-select and sized selects expose listbox, not combobox.
+          implicitRole =
+            element.multiple || Number(element.size) > 1
+              ? "listbox"
+              : "combobox";
+        } else if (tagName === "section") {
+          // Only a named section is a region.
+          implicitRole =
+            element.hasAttribute("aria-label") ||
+            element.hasAttribute("aria-labelledby")
+              ? "region"
+              : "";
+        } else {
+          implicitRole = staticRoles[tagName] ?? "";
+        }
+      }
+
       const labels = "labels" in element ? element.labels : null;
       const label = normalized(labels?.[0]?.textContent);
+
+      // aria-labelledby wins over aria-label in the accessible name calculation.
+      const labelledBy = normalized(element.getAttribute("aria-labelledby"));
+      const labelledByText = labelledBy
+        ? normalized(
+            labelledBy
+              .split(/\s+/)
+              .map((id) => element.ownerDocument.getElementById(id))
+              .filter(Boolean)
+              .map((node) =>
+                normalized(
+                  node.getAttribute("aria-label") || node.textContent,
+                ),
+              )
+              .filter(Boolean)
+              .join(" "),
+          )
+        : "";
+
       const accessibleName =
+        labelledByText ||
         normalized(element.getAttribute("aria-label")) ||
         label ||
         normalized(element.getAttribute("alt")) ||
+        normalized(element.getAttribute("title")) ||
         normalized(element.textContent);
+
       const testIdAttribute = testIdAttributes.find((attribute) =>
         element.hasAttribute(attribute),
       );
@@ -224,6 +333,7 @@ export async function captureTargetSnapshot(page, selector) {
         role: normalized(implicitRole),
         accessibleName,
         label,
+        labelledByText,
         placeholder: normalized(element.getAttribute("placeholder")),
         text: normalized(element.textContent),
         id: normalized(element.id),
@@ -241,12 +351,13 @@ export async function captureTargetSnapshot(page, selector) {
 }
 
 export async function validateSelectorCandidates(page, candidates, options = {}) {
-  const timeout = options.timeout ?? 1_000;
+  const timeout = options.timeout ?? 5_000;
   const requireVisible = options.requireVisible ?? true;
+  const root = resolveSearchRoot(page, options);
 
   return Promise.all(
     candidates.map(async (candidate) => {
-      const locator = locatorFromCandidate(page, candidate);
+      const locator = locatorFromCandidate(root, candidate);
       let count = 0;
       let visible = false;
       let error = null;
@@ -280,7 +391,7 @@ export function chooseBestCandidate(results) {
 }
 
 export async function discoverAndValidate(page, selector, options = {}) {
-  const snapshot = await captureTargetSnapshot(page, selector);
+  const snapshot = await captureTargetSnapshot(page, selector, options);
   const candidates = discoverSelectorCandidates(snapshot, options);
   const results = await validateSelectorCandidates(page, candidates, options);
   return {

@@ -7,6 +7,7 @@ import {
   formatPlaywrightLocator,
   isLikelyGeneratedIdentifier,
   locatorFromCandidate,
+  resolveSearchRoot,
   validateSelectorCandidates,
 } from "../src/index.js";
 
@@ -146,5 +147,73 @@ test("returns no best candidate when every locator is ambiguous", () => {
       { valid: false, count: 0 },
     ]),
     null,
+  );
+});
+
+test("returns the page itself when no frame is requested", () => {
+  const page = { locator: () => {} };
+  assert.equal(resolveSearchRoot(page), page);
+  assert.equal(resolveSearchRoot(page, {}), page);
+});
+
+test("resolves single and nested frame roots", () => {
+  const calls = [];
+  const makeRoot = (depth) => ({
+    depth,
+    frameLocator: (selector) => (calls.push(selector), makeRoot(depth + 1)),
+  });
+  const page = makeRoot(0);
+
+  assert.equal(resolveSearchRoot(page, { frame: "#card" }).depth, 1);
+  assert.deepEqual(calls, ["#card"]);
+
+  calls.length = 0;
+  assert.equal(
+    resolveSearchRoot(page, { frame: ["#outer", "#inner"] }).depth,
+    2,
+  );
+  assert.deepEqual(calls, ["#outer", "#inner"]);
+});
+
+test("rejects an unusable frame option", () => {
+  assert.throws(
+    () => resolveSearchRoot({}, { frame: "#card" }),
+    /does not support frameLocator/,
+  );
+  assert.throws(
+    () => resolveSearchRoot({ frameLocator: () => {} }, { frame: 7 }),
+    /must be a selector string or an array/,
+  );
+});
+
+test("validates candidates inside a frame root", async () => {
+  const locator = {
+    count: async () => 1,
+    first: () => ({ isVisible: async () => true }),
+  };
+  const frameRoot = { getByRole: () => locator };
+  const page = { frameLocator: () => frameRoot, getByRole: () => null };
+
+  const [result] = await validateSelectorCandidates(
+    page,
+    [{ kind: "role", value: "textbox", options: { name: "Card number" } }],
+    { frame: 'iframe[title="card"]' },
+  );
+
+  assert.equal(result.valid, true);
+});
+
+test("prefers aria-labelledby text for the accessible name", () => {
+  const [candidate] = discoverSelectorCandidates({
+    tagName: "select",
+    role: "combobox",
+    accessibleName: "Mailbox folder",
+    labelledByText: "Mailbox folder",
+  });
+
+  assert.equal(candidate.kind, "role");
+  assert.equal(
+    formatPlaywrightLocator(candidate),
+    'page.getByRole("combobox", {"name":"Mailbox folder","exact":true})',
   );
 });
