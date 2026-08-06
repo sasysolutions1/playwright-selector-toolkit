@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plugin fixture</title>
+  </head>
+  <body>
+    <main>
+      <form id="login-form">
+        <label>Username <input name="username" autocomplete="username" /></label>
+        <label
+          >Password <input name="password" type="password" autocomplete="current-password"
+        /></label>
+        <button type="submit">Sign in</button>
+      </form>
+      <section id="dashboard" hidden>
+        <h1>Dashboard</h1>
+        <p id="account-record">Customer ACCOUNT-4815</p>
+        <button type="button" data-qa="submit-order">Submit order</button>
+      </section>
+    </main>
+    <script>
+      document.querySelector('#login-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (
+          form.elements.username.value === 'demo' &&
+          form.elements.password.value === 'selector'
+        ) {
+          form.hidden = true;
+          document.querySelector('#dashboard').hidden = false;
+        }
+      });
+    </script>
+  </body>
+</html>

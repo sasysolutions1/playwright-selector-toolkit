@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Selector Toolkit Sample App</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 2rem;
+      }
+      form,
+      main {
+        max-width: 42rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+      label {
+        font-weight: 600;
+      }
+      input,
+      textarea,
+      button {
+        font: inherit;
+        padding: 0.65rem;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .status {
+        padding: 0.75rem;
+        background: #eef7ee;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="login-form" data-login data-qa="login-form">
+      <h1>Sign in</h1>
+      <label for="username">Username</label>
+      <input id="username" autocomplete="username" />
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" />
+      <button type="submit" data-qa="sign-in">Sign in</button>
+      <p id="login-error" role="alert" hidden>Invalid credentials</p>
+    </form>
+
+    <main id="dashboard" hidden data-qa="dashboard">
+      <h1>Dashboard</h1>
+      <p class="status">Ready — CUSTOMER-48291</p>
+      <label for="message">Message</label>
+      <textarea id="message" data-qa="message-editor"></textarea>
+      <button type="button" data-testid="send-message" data-qa="send-message">Send message</button>
+    </main>
+
+    <script>
+      document.querySelector('#login-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = document.querySelector('#username').value;
+        const password = document.querySelector('#password').value;
+        if (username === 'demo' && password === 'selector') {
+          document.querySelector('#login-form').hidden = true;
+          document.querySelector('#dashboard').hidden = false;
+          document.title = 'Sample Dashboard';
+        } else {
+          document.querySelector('#login-error').hidden = false;
+        }
+      });
+    </script>
+  </body>
+</html>

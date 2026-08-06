@@ -1,0 +1,45 @@
+schemaVersion: '1.0'
+name: Authenticated sample dashboard
+selectors:
+  - id: dashboard-heading
+    name: Dashboard heading
+    locator:
+      type: role
+      role: heading
+      name: Dashboard
+    assertions:
+      count: 1
+      visible: all
+
+  - id: message-editor
+    name: Message editor
+    locator:
+      type: label
+      value: Message
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+      editable: all
+
+  - id: send-message
+    name: Send message button
+    locator:
+      type: test-id
+      attribute: data-testid
+      value: send-message
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+
+  - id: optional-notice
+    name: Optional maintenance notice
+    required: false
+    locator:
+      type: css
+      selector: .maintenance-notice
+    assertions:
+      count:
+        min: 0
+        max: 1

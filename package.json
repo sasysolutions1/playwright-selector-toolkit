@@ -1,0 +1,105 @@
+{
+  "name": "playwright-selector-toolkit",
+  "version": "0.18.0",
+  "description": "Open-source discovery, validation, and reporting tools for resilient Playwright selectors.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Hunter Melnick",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sasysolutions1/playwright-selector-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sasysolutions1/playwright-selector-toolkit/issues"
+  },
+  "homepage": "https://github.com/sasysolutions1/playwright-selector-toolkit#readme",
+  "keywords": [
+    "playwright",
+    "selectors",
+    "locators",
+    "testing",
+    "automation",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "bin": {
+    "selector": "./dist/cli/index.js",
+    "selector-toolkit": "./dist/cli/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx src/cli/index.ts",
+    "start": "node dist/cli/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --pool=threads --maxWorkers=2 --minWorkers=1 --reporter=dot",
+    "test:watch": "vitest",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test",
+    "pack:check": "npm pack --dry-run",
+    "prepare": "npm run build",
+    "smoke:browser": "node dist/cli/index.js --trace off --screenshots off browser inspect about:blank --json",
+    "smoke:dom": "node examples/dom/smoke.mjs",
+    "smoke:locators": "node examples/locators/smoke.mjs",
+    "smoke:validation": "node examples/validation/smoke.mjs",
+    "smoke:snapshot": "node examples/snapshots/smoke.mjs",
+    "smoke:comparison": "node examples/comparison/smoke.mjs",
+    "smoke:evidence": "node examples/evidence/smoke.mjs",
+    "smoke:report": "node examples/report/smoke.mjs",
+    "smoke:dashboard": "node examples/report/dashboard-smoke.mjs",
+    "smoke:plugins": "node examples/plugins/smoke.mjs",
+    "smoke:sample-app": "node examples/sample-app/workflow.mjs",
+    "smoke:outside-access": "node examples/outside-access/static-smoke.mjs",
+    "smoke:all": "npm run smoke:browser && npm run smoke:dom && npm run smoke:locators && npm run smoke:validation && npm run smoke:snapshot && npm run smoke:comparison && npm run smoke:evidence && npm run smoke:report && npm run smoke:dashboard && npm run smoke:plugins && npm run smoke:sample-app && npm run smoke:outside-access && npm run smoke:repair && npm run smoke:monitoring && npm run smoke:history",
+    "smoke:repair": "node examples/repair/smoke.mjs",
+    "compatibility": "node dist/cli/index.js compatibility",
+    "security:review": "node dist/cli/index.js security audit",
+    "security:audit": "npm audit --audit-level=high",
+    "api:check": "node scripts/check-public-api.mjs",
+    "package:verify": "node scripts/verify-package.mjs",
+    "sbom": "node scripts/generate-sbom.mjs",
+    "release:tag": "node scripts/verify-release-tag.mjs",
+    "release:check": "npm run check && npm run build && npm run compatibility && npm run security:review && npm run security:audit && npm run api:check && npm run package:verify && npm run sbom",
+    "smoke:monitoring": "node examples/monitoring/smoke.mjs",
+    "smoke:history": "node examples/monitoring-history/smoke.mjs"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "commander": "^14.0.0",
+    "playwright": "^1.54.1",
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "@playwright/test": "^1.54.1",
+    "@types/archiver": "^6.0.4",
+    "@types/node": "^22.16.5",
+    "eslint": "^9.31.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "npm@11.5.1",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Snapshot Fixture</title>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+    <script>
+      window.shouldNotAppear = 'secret-script-value';
+    </script>
+  </head>
+  <body>
+    <main>
+      <p id="contact">Contact admin@example.com or 719-555-1212.</p>
+      <a id="private-link" href="https://example.test/account?token=private#section">Account</a>
+      <form action="https://example.test/submit?session=private">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="never-capture-me@example.com" />
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" value="super-secret-password" />
+        <button id="send" data-testid="send-button" onclick="window.secretHandler()">Send</button>
+      </form>
+      <div id="shadow-host"></div>
+      <iframe
+        title="child"
+        srcdoc="<!doctype html><html><body><button id='frame-action'>Frame Action</button><p>child@example.com</p></body></html>"
+      ></iframe>
+    </main>
+    <script>
+      const root = document.querySelector('#shadow-host').attachShadow({ mode: 'open' });
+      root.innerHTML =
+        '<button id="shadow-action">Shadow Action</button><span>shadow@example.com</span>';
+    </script>
+  </body>
+</html>

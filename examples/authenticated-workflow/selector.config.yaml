@@ -1,0 +1,10 @@
+artifactsDir: ./.selector-artifacts
+browser: chromium
+headless: true
+trace: retain-on-failure
+screenshots: on-failure
+storageStatePath: ./.auth/storage-state.json
+plugins:
+  - ./application-plugin.mjs
+pluginTimeoutMs: 10000
+pluginFailureMode: fail-fast

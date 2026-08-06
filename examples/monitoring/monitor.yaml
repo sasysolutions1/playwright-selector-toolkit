@@ -1,0 +1,42 @@
+schemaVersion: '1.0'
+name: Production selector health
+pollIntervalMs: 60000
+
+targets:
+  - id: login
+    name: Login page
+    manifestPath: ../validation/selector-manifest.yaml
+    url: https://example.com/login
+    intervalMs: 300000
+    notificationAdapterIds: [email, sms, voice]
+    policy:
+      openAfterFailures: 2
+      recoverAfterSuccesses: 1
+      highAfterFailures: 3
+      criticalAfterFailures: 5
+      reminderIntervalMs: 21600000
+
+notifications:
+  - id: email
+    type: sendgrid-email
+    apiKeyEnv: SENDGRID_API_KEY
+    fromEnv: SELECTOR_ALERT_EMAIL_FROM
+    toEnv: SELECTOR_ALERT_EMAIL_TO
+    severities: [warning, high, critical]
+    notifyRecovery: true
+  - id: sms
+    type: twilio-sms
+    accountSidEnv: TWILIO_ACCOUNT_SID
+    authTokenEnv: TWILIO_AUTH_TOKEN
+    fromEnv: TWILIO_ALERT_FROM
+    toEnv: TWILIO_ALERT_TO
+    severities: [high, critical]
+    notifyRecovery: true
+  - id: voice
+    type: twilio-voice
+    accountSidEnv: TWILIO_ACCOUNT_SID
+    authTokenEnv: TWILIO_AUTH_TOKEN
+    fromEnv: TWILIO_ALERT_FROM
+    toEnv: TWILIO_ALERT_TO
+    severities: [critical]
+    notifyRecovery: false

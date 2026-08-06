@@ -1,0 +1,18 @@
+{
+  "artifactsDir": "./.selector-artifacts",
+  "browser": "chromium",
+  "headless": true,
+  "timeoutMs": 30000,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "trace": "retain-on-failure",
+  "screenshots": "on-failure",
+  "baseUrl": "https://example.com",
+  "navigationTimeoutMs": 45000,
+  "storageStatePath": "./.auth/storage-state.json",
+  "plugins": ["./plugins/demo-plugin.mjs"],
+  "pluginTimeoutMs": 10000,
+  "pluginFailureMode": "isolate"
+}

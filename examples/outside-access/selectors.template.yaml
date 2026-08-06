@@ -1,0 +1,46 @@
+schemaVersion: '1.0'
+name: Outside Access channel selectors — replace discovered placeholders
+selectors:
+  - id: inbox-root
+    name: Inbox root
+    description: Replace this placeholder after reviewing a live authorized discovery report.
+    locator:
+      type: css
+      selector: "[data-selector-toolkit-replace='inbox-root']"
+    assertions:
+      count: 1
+      visible: all
+
+  - id: conversation-list
+    name: Conversation list
+    description: Replace this placeholder after reviewing live locator recommendations.
+    locator:
+      type: css
+      selector: "[data-selector-toolkit-replace='conversation-list']"
+    assertions:
+      count: 1
+      visible: all
+
+  - id: message-composer
+    name: Message composer
+    description: Replace this placeholder and test it without sending a message.
+    locator:
+      type: css
+      selector: "[data-selector-toolkit-replace='message-composer']"
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+      editable: all
+
+  - id: attachment-input
+    name: JPEG attachment input
+    required: false
+    description: Replace after confirming the live attachment flow for the target facility.
+    locator:
+      type: css
+      selector: "[data-selector-toolkit-replace='attachment-input']"
+    assertions:
+      count:
+        min: 0
+        max: 1

@@ -1,0 +1,42 @@
+name: Selector health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  selector-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Validate required selectors
+        env:
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        run: >-
+          node dist/cli/index.js
+          --config examples/ci/selector.config.ci.yaml
+          validate examples/ci/selectors/login.yaml
+          https://example.com/login
+      - name: Build portable report
+        if: always()
+        run: >-
+          node dist/cli/index.js report .selector-artifacts
+          --title "CI selector health"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selector-health-${{ github.run_id }}
+          path: .selector-artifacts
+          if-no-files-found: warn

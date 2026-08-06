@@ -1,0 +1,55 @@
+schemaVersion: '1.0'
+name: Validation smoke manifest
+waitUntil: domcontentloaded
+selectors:
+  - id: heading
+    name: Account heading
+    locator:
+      type: role
+      role: heading
+      name: Account settings
+    assertions:
+      count: 1
+      visible: all
+
+  - id: email
+    name: Email field
+    locator:
+      type: label
+      value: Email
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+      editable: all
+
+  - id: save
+    name: Save button
+    locator:
+      type: role
+      role: button
+      name: Save
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+
+  - id: frame-action
+    name: Frame action button
+    framePath: main/frame[0]:details
+    locator:
+      type: role
+      role: button
+      name: Frame action
+    assertions:
+      count: 1
+      visible: all
+
+  - id: optional-banner
+    name: Optional banner
+    required: false
+    locator:
+      type: css
+      selector: .optional-banner
+    assertions:
+      count: 1

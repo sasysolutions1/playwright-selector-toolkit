@@ -1,0 +1,32 @@
+schemaVersion: '1.0'
+name: Example login page
+selectors:
+  - id: username
+    locator:
+      type: label
+      value: Username
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+      editable: all
+
+  - id: password
+    locator:
+      type: label
+      value: Password
+    assertions:
+      count: 1
+      visible: all
+      enabled: all
+      editable: all
+
+  - id: sign-in
+    locator:
+      type: role
+      role: button
+      name: Sign in
+    assertions:
+      count: 1
+      visible: all
+      enabled: all

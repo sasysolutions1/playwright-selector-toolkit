@@ -1,0 +1,12 @@
+artifactsDir: ./.selector-artifacts/outside-access
+browser: chromium
+headless: true
+timeoutMs: 30000
+navigationTimeoutMs: 60000
+trace: retain-on-failure
+screenshots: on-failure
+userDataDir: ./.browser-profile/securus-validation
+plugins:
+  - ./outside-access-plugin.mjs
+pluginTimeoutMs: 15000
+pluginFailureMode: fail-fast

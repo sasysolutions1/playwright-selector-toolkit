@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Diagnostic Evidence Fixture</title>
+  </head>
+  <body>
+    <main>
+      <h1>Diagnostic Evidence Fixture</h1>
+      <label for="email">Email</label>
+      <input id="email" type="email" value="hunter@example.com" />
+      <button id="submit" data-testid="submit-button">Submit</button>
+    </main>
+    <script>
+      console.error('Fixture console error for hunter@example.com token=secret-value');
+      fetch('https://diagnostic.test/missing?secret=secret-value').catch(() => undefined);
+      fetch('https://diagnostic.test/unreachable?token=secret-value').catch(() => undefined);
+      setTimeout(() => {
+        throw new Error('Fixture page error 719-555-1212');
+      }, 25);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Locator Candidate Fixture</title>
+  </head>
+  <body>
+    <main>
+      <button id="save" data-testid="save-action">Save changes</button>
+      <button class="duplicate">Duplicate</button>
+      <button class="duplicate">Duplicate</button>
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email" placeholder="name@example.test" />
+      <a data-qa="help-link" href="/help?token=private">Help center</a>
+      <section id="shadow-host"></section>
+      <iframe
+        name="child"
+        title="Child frame"
+        srcdoc="<!doctype html><html><body><button data-testid='frame-action'>Frame action</button></body></html>"
+      ></iframe>
+    </main>
+    <script>
+      const root = document.querySelector('#shadow-host').attachShadow({ mode: 'open' });
+      root.innerHTML = '<button data-cy="shadow-action">Shadow action</button>';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Selector Toolkit DOM Fixture</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      #hidden-action {
+        display: none;
+      }
+      button,
+      a,
+      input {
+        margin: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Discovery fixture</h1>
+      <button id="send" data-testid="send-action">Send</button>
+      <a id="account" href="https://example.test/account?token=private#profile">
+        Contact hunter@example.com
+      </a>
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email" value="private@example.com" />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" value="never-capture-me" />
+      <button id="hidden-action">Hidden action</button>
+      <div id="shadow-host"></div>
+      <iframe
+        title="Child actions"
+        srcdoc="<!doctype html><html lang='en'><body><button id='frame-action'>Frame action</button></body></html>"
+      ></iframe>
+    </main>
+    <script>
+      const root = document.querySelector('#shadow-host').attachShadow({ mode: 'open' });
+      root.innerHTML =
+        '<button id="shadow-action" aria-label="Shadow action">Shadow action</button>';
+    </script>
+  </body>
+</html>
