@@ -7,18 +7,19 @@ uniqueness and visibility, and returns the strongest locator that actually
 works. It prefers user-facing accessibility contracts over generated CSS paths
 and refuses to hide ambiguity behind `nth()` fallbacks.
 
-## Where the complete toolkit lives
+## Where the toolkit lives
 
-The complete engineered toolkit is maintained on the GitHub branch
-`agent/initial-tested-toolkit-20260729` and reviewed in
-[pull request #1](https://github.com/sasysolutions1/playwright-selector-toolkit/pull/1).
-The default `main` branch still contains only the original project placeholder
-until that pull request is reviewed and merged.
+**`main` is the source of truth.** It holds the complete toolkit — selector
+engine, automated tests, usage example, safety documentation, CI workflow,
+changelog, and release checklist. Clone `main` and use it.
 
-The implementation branch contains the selector engine, automated tests, usage
-example, safety documentation, CI workflow, changelog, and release checklist.
-Do not reconstruct the toolkit from the placeholder branch or deploy the
-placeholder over this reviewed source.
+There is no separate implementation branch. Earlier revisions of this README
+directed readers to `agent/initial-tested-toolkit-20260729` and described `main`
+as a placeholder; that was accurate only before
+[pull request #1](https://github.com/sasysolutions1/playwright-selector-toolkit/pull/1)
+merged on 2026-08-01, and the sentence was carried onto `main` by the merge
+itself. It has been wrong ever since. `main` is strictly ahead of every other
+branch in the repository.
 
 ## What it does
 
@@ -164,7 +165,16 @@ boundary.
 ## Release status
 
 Version `0.1.0` is the first tested release. The source contains no
-credentials, target-site data, browser profiles, or recorded sessions. The
-`v0.1.0` tag and GitHub Release publication remain open.
+credentials, target-site data, browser profiles, or recorded sessions.
+
+Verified on `main` 2026-08-06: `npm test` — **11 passing, 0 failing**, covering
+candidate ranking, generated-identifier rejection, locator construction,
+uniqueness/visibility validation, ambiguity refusal, frame-root resolution
+(single and nested), and `aria-labelledby` name computation. CI runs the suite
+on every push.
+
+Remaining work: the `v0.1.0` tag and GitHub Release publication are still open.
+This repository is a library — there is no deployed instance and no runtime
+state, so no provenance stamp or backup applies to it.
 
 See [CHANGELOG.md](CHANGELOG.md) for the release history.
